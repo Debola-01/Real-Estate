@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <link rel="stylesheet" href="calculator.css"> <!-- Link to the CSS file -->
+</head>
+<body>
+    <div class="calculator">
+        <div class="calculator-screen" id="screen">0</div>
+        <div class="calculator-keys">
+            <button class="operator" data-operator="add">+</button>
+            <button class="operator" data-operator="subtract">-</button>
+            <button class="operator" data-operator="multiply">&times;</button>
+            <button class="operator" data-operator="divide">&divide;</button>
+
+            <button data-number="7">7</button>
+            <button data-number="8">8</button>
+            <button data-number="9">9</button>
+            <button class="clear">C</button>
+
+            <button data-number="4">4</button>
+            <button data-number="5">5</button>
+            <button data-number="6">6</button>
+            <button data-number="1">1</button>
+
+            <button data-number="2">2</button>
+            <button data-number="3">3</button>
+            <button data-number="0">0</button>
+            <button data-decimal=".">.</button>
+
+            <button class="equal-sign" id="equal">=</button>
+        </div>
+    </div>
+
+    <script>
+        // Calculator logic
+        const screen = document.getElementById('screen');
+        let currentValue = '0';
+        let previousValue = null;
+        let operator = null;
+
+        function updateScreen() {
+            screen.textContent = currentValue;
+        }
+
+        function clear() {
+            currentValue = '0';
+            previousValue = null;
+            operator = null;
+            updateScreen();
+        }
+
+        function inputNumber(number) {
+            if (currentValue === '0') {
+                currentValue = number;
+            } else {
+                currentValue += number;
+            }
+            updateScreen();
+        }
+
+        function inputOperator(newOperator) {
+            if (operator !== null) {
+                calculate();
+            }
+            previousValue = currentValue;
+            currentValue = '0';
+            operator = newOperator;
+        }
+
+        function calculate() {
+            if (operator === null || previousValue === null) {
+                return;
+            }
+            const prev = parseFloat(previousValue);
+            const curr = parseFloat(currentValue);
+            switch (operator) {
+                case 'add':
+                    currentValue = (prev + curr).toString();
+                    break;
+                case 'subtract':
+                    currentValue = (prev - curr).toString();
+                    break;
+                case 'multiply':
+                    currentValue = (prev * curr).toString();
+                    break;
+                case 'divide':
+                    currentValue = (prev / curr).toString();
+                    break;
+            }
+            operator = null;
+            previousValue = null;
+            updateScreen();
+        }
+
+        // Event listeners
+        document.querySelectorAll('button[data-number]').forEach(button => {
+            button.addEventListener('click', () => {
+                inputNumber(button.dataset.number);
+            });
+        });
+
+        document.querySelectorAll('.operator').forEach(button => {
+            button.addEventListener('click', () => {
+                inputOperator(button.dataset.operator);
+            });
+        });
+
+        document.querySelector('.clear').addEventListener('click', clear);
+
+        document.getElementById('equal').addEventListener('click', calculate);
+
+        document.querySelector('button[data-decimal]').addEventListener('click', () => {
+            if (!currentValue.includes('.')) {
+                currentValue += '.';
+                updateScreen();
+            }
+        });
+    </script>
+</body>
+</html>
